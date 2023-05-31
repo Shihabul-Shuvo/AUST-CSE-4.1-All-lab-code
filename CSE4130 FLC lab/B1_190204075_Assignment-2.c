@@ -3,13 +3,16 @@
 #include <string.h>
 #include<ctype.h>
 
+char kws[20][10]={"int", "double", "float", "char", "for", "while", "do", "if", "else", "switch", "case"};
 char ops[] = "+-*/%=<>!|&";
 char pars[] = "(){}[]", op[5];
 char seps[]=",;'\"";
+char ids[100][20];
 char c,s[20];
+int err=0;
 
 FILE *rf,*wf;
-int opflag=0;
+int totid=1, totkw = 11, opflag=0;
 
 //this function will take a file name input from user and open it in read mode
 int read_file(){
@@ -65,6 +68,15 @@ void plainC(){
     fclose(p2);
 }
 //isoperator() function will check for a operators
+int iskeyword(){
+    for(int i=0; i<totkw; i++){
+        if(strcmp(s,kws[i]) == 0){
+            printf("[kw %s]", s);
+            return 1;
+        }
+    }
+    return 0;
+}
 int isoperator(){
     int len=strlen(ops);
     for(int i=0; i<len; i++){
@@ -109,7 +121,16 @@ int isseparator(){
 //isidentifier() function find the valid keywords also label as id and if not valid then label as unkn
 int isidentifier(){
     int i=0,idflag=0;
+    for (int i = 1; i < totid; i++) {
+        //this for loops checks if the identifier already declared
+        //if declared then refers to the entry pointer in the symbol table of that identifier
+        if(strcmp(s,ids[i]) == 0){
+            printf("[id %d]", i);
+            return 1;
+        }
+    }
     int len=strlen(s);
+    //this if section checks if the word is a valid indentifier
     if(s[0]=='_' || isalpha(s[0])){
         for(i=1; i<len; i++){
             if(s[i]=='_' || isalnum(s[i])){
@@ -119,6 +140,7 @@ int isidentifier(){
         idflag=1;
     }
     if(idflag==1){
+        strcpy(ids[totid++], s);
         printf("[id %s] ",s);
         idflag=0;
         return 1;
@@ -173,18 +195,7 @@ int lexemes(){
         s[i]='\0';
         int len = strlen(s);
         if(len>0){
-            //printf("\ncur word is: %s    ",s);
-            if(strncmp(s, "int", 3) == 0 || strncmp(s, "double", 6) == 0 ||
-                strncmp(s, "float", 5) == 0 || strncmp(s, "char", 4) == 0 ||
-                strncmp(s, "string", 6) == 0 ){
-                printf("[kw %s] ",s);
-            }
-            else if(strncmp(s, "for", 3) == 0 || strncmp(s, "while", 5) == 0 ||
-                strncmp(s, "do", 2) == 0 || strncmp(s, "case", 4) == 0 ||
-                strncmp(s, "if", 2) == 0 || strncmp(s, "else", 4) == 0 ||
-                strncmp(s, "switch", 5) == 0){
-                printf("[kw %s] ",s);
-            }
+            if(iskeyword());
             else if(isidentifier());
             else if(isnumber()){}
             else if(strncmp(s, "return", 5)==0){
@@ -192,6 +203,7 @@ int lexemes(){
             }
             else{
                 printf("[unkn %s] ",s);
+                printf("\nerror %d: invalid lexemes \"%s\" \n", err++,s);
             }
             s[0] = '\0';
         }
