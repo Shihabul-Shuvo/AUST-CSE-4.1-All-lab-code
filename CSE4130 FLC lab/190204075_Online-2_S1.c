@@ -35,8 +35,6 @@ int read_file(){
 }
 
 //this plainC() function removes all newline, extra spaces and comments from a c source code file
-//one problem occurs for this function is
-//it end with a unknown character in the end on the generated file
 void plainC(){
     FILE *p2;
     char c, c2 = ' ';
@@ -142,8 +140,6 @@ int isnumber(){
         return 0;
 }
 //this function analyses all the words and find the lexemes
-//this function produces expected result but returns with a error
-//cause of error: unknown
 int lexemes(){
     //read a file to get the lexemes
     read_file();
