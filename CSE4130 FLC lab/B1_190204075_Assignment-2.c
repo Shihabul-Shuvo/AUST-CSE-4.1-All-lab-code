@@ -75,6 +75,7 @@ int iskeyword(){
     }
     return 0;
 }
+
 int isoperator(){
     int len=strlen(ops);
     for(int i=0; i<len; i++){

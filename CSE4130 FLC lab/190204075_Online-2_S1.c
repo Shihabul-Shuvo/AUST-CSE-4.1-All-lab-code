@@ -117,7 +117,7 @@ int isseparator(){
 int isnumber(){
     int len=strlen(s);
     int i, nflag=0;
-    // this condition will check if the number structure is d.dd
+    // this condition will check if the number structure is d.dd*
     if( isdigit(s[0]) && s[1]=='.' && isdigit(s[2])){
             nflag=1;
     }
