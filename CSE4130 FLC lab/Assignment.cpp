@@ -1,3 +1,4 @@
+// first create a source file named "input.c" on the same directory as this to run this code properly
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -75,6 +76,15 @@ void plainC() {
     p2.close();
     rf.close();
     //cout<<"\n"<<endl;
+}
+void insertToken(string type, string str){
+    // insert tokens to a vector of structure
+    TokenStruct newtoken;
+    newtoken.no = token.size() + 1;
+    newtoken.type = type;
+    newtoken.value = str;
+
+    token.push_back(newtoken);
 }
 int isoperator() {
     // isoperator() function will check for an operator
@@ -162,15 +172,6 @@ int isnumber() {
         return 1;
     }
     return 0;
-}
-void insertToken(string type, string str){
-    // insert tokens to a vector of structure
-    TokenStruct newtoken;
-    newtoken.no = token.size() + 1;
-    newtoken.type = type;
-    newtoken.value = str;
-
-    token.push_back(newtoken);
 }
 int lexemes() {
     // This function analyzes all the words and finds the lexemes
