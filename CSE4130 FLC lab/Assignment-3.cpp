@@ -111,7 +111,6 @@ void generateSymbolTable(){
         }
 
     }
-    cout<<endl;
 }
 void free(){
     // Delete all the entry from symbol table
