@@ -5,8 +5,8 @@ int main(void)
     FILE *p1,*p2;
     char c, c2 = ' ';
 
-    p1 = fopen("B1_190204075_Assignment-1.c","r");
-    p2 = fopen("remove.txt", "w");
+    p1 = fopen("input.c","r");
+    p2 = fopen("plainC.txt", "w");
 
     //If file is not created then show this message
     if(!p1)printf("\nFile not found");
@@ -43,7 +43,7 @@ int main(void)
     fclose(p1);
     fclose(p2);
 
-    p2 = fopen("remove.txt", "r");
+    p2 = fopen("plainC.txt", "r");
     while((c = fgetc(p2))!= EOF)
     {
         printf("%c", c);

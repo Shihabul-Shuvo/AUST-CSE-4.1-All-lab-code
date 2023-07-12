@@ -15,7 +15,7 @@ vector <SymbolTableStruct> table; // vector of SymbolTable structure
 vector <pair<string, string>> tokens;
 
 int tokenize(){
-    ifstream inputFile("input.txt");
+    ifstream inputFile("input3.txt");
     if(!inputFile){
         cerr<<"Error opening file."<<endl;
         return 1;
@@ -169,6 +169,7 @@ void userChoice(){
 }
 
 int main(){
+    //create or download the text file input3.txt
     tokenize();
 
     //for(const auto& token : tokens){
