@@ -1,4 +1,3 @@
-// first create a source file named "input.c" on the same directory as this to run this code properly
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -77,15 +76,6 @@ void plainC() {
     rf.close();
     //cout<<"\n"<<endl;
 }
-void insertToken(string type, string str){
-    // insert tokens to a vector of structure
-    TokenStruct newtoken;
-    newtoken.no = token.size() + 1;
-    newtoken.type = type;
-    newtoken.value = str;
-
-    token.push_back(newtoken);
-}
 int isoperator() {
     // isoperator() function will check for an operator
     if (ops.find(c) != string::npos) {
@@ -118,7 +108,7 @@ int iskeyword() {
     return 0;
 }
 int isidentifier() {
-    // isidentifier() function finds the valid keywords also labeled as id and if not valid then labeled as unkn
+    // isidentifier() function finds the valid keywords also label as id and if not valid then label as unkn
     for (int i = 1; i < ids.size(); i++) {
         if (s == ids[i]) {
             return 1;
@@ -173,6 +163,15 @@ int isnumber() {
     }
     return 0;
 }
+void insertToken(string type, string str){
+    // insert tokens to a vector of structure
+    TokenStruct newtoken;
+    newtoken.no = token.size() + 1;
+    newtoken.type = type;
+    newtoken.value = str;
+
+    token.push_back(newtoken);
+}
 int lexemes() {
     // This function analyzes all the words and finds the lexemes
     // Read a c file to get the source code
@@ -223,7 +222,7 @@ bool isdatatype(string str) {
     }
     return false;
 }
-void setAttribute(int i, string recentScope){
+void search_in_table(int i, string recentScope){
     //find id the variable already exist in the symbol table and if it has assigned a value
     //then update the value in symbol table
     TokenStruct& t = token[i];
@@ -239,9 +238,8 @@ void setAttribute(int i, string recentScope){
         }
     }
 }
-void Insert(vector <TokenStruct> newtoken){ // instance of a vector of structure so that the main variable's values doesn't get manipulated
+void create_symbol_table(vector <TokenStruct> newtoken){ // instance of a vector of structure so that the main variable's values doesn't get manipulated
     // Insert new entry in the symbol table for lexemes
-    SymbolTable tb;
     string recentScope, lastScope= "Global"; // initially scope is Global
     string recentDatatype;
     int braces=0;
@@ -255,6 +253,7 @@ void Insert(vector <TokenStruct> newtoken){ // instance of a vector of structure
             recentScope = lastScope;
         }
         else if(t.value == "}") braces--;
+        SymbolTable tb;
         if(t.type =="kw" && isdatatype(t.value)){ // isdatatype() function to check if it's a data type or not
             tb.si_no = table.size() + 1; // sirial no
             recentDatatype = t.value; // this is used for next variable in a single type
@@ -265,12 +264,12 @@ void Insert(vector <TokenStruct> newtoken){ // instance of a vector of structure
                 tb.scope = recentScope; // scope
                 t = newtoken[++i];
                 if(t.value == "("){
-                    tb.id_type = "func"; // id type = func
+                    tb.id_type = "func"; // insert id type = func
                     recentScope = tb.name;
                     lastScope = recentScope; // save the current scope for further use for variables in this scope
                     tb.value = "\0"; // no value has for funciton
                 }
-                else if(t.value == "=" || t.value == ";" || t.value == ")"){ // could be x1 = 121 or x1; or f1(int x1)
+                else if(t.value == "=" || t.value == ";" || t.value == ")" || t.value == ","){ // could be x1 = 121 or x1; or f1(int x1)
                     tb.id_type = "var"; // id type = var
                     tb.scope = lastScope; // scope
                     if(t.value == "="){ // = means a value is assigned for this variable
@@ -283,10 +282,11 @@ void Insert(vector <TokenStruct> newtoken){ // instance of a vector of structure
                 }
                 else t = newtoken[--i];
 
-            } table.push_back(tb); // push new values in the vector
+            } else t = newtoken[--i];
+            string vname = tb.name; if(!vname.empty() ) table.push_back(tb); // push new values in the vector
         }
         else if(t.type=="id"){
-            setAttribute(i, recentScope); // update values of variables
+            search_in_table(i, recentScope); // update values of variables
         }
     }
 }
@@ -318,6 +318,63 @@ void lookUp(){
     }
     else cout<<"--Symbol table is empty."<<endl<<endl;
 }
+bool setAttribute(string iteamname){
+    s.clear();
+    s=iteamname;
+    if(isidentifier() ){
+        string idtype, datatype, scope, value;
+        int sno;
+        cout<<"Enter attributes values: "<<endl;
+        cout<<"SI no: "; cin>>sno;
+        cout<<"Id type: "; cin>>idtype;
+        cout<<"Data type: "; cin>>datatype;
+        cout<<"Scope: "; cin>>scope;
+        cout<<"Value: "; cin>>value;
+
+        SymbolTable tb;
+        tb.si_no = 0;
+        tb.name = " ";
+        tb.data_type = " ";
+        tb.id_type = " ";
+        tb.scope = " ";
+        tb.value = " ";
+        table.push_back(tb);
+        for(int i=table.size(); i>=sno; i--){
+            //cout<<table[i].si_no<<endl;
+            table[i].si_no = table[i-1].si_no + 1;
+            table[i].name = table[i-1].name;
+            table[i].id_type = table[i-1].id_type;
+            table[i].data_type = table[i-1].data_type;
+            table[i].scope = table[i-1].scope;
+            table[i].value = table[i-1].value;
+        }
+        table[sno-1].si_no = sno;
+        table[sno-1].name = iteamname;
+        table[sno-1].id_type = idtype;
+        table[sno-1].data_type = datatype;
+        table[sno-1].scope = scope;
+        table[sno-1].value = value;
+        return true;
+    }
+    else{
+        cout<<"Not a valid identifier name. "<<endl;
+        return false;
+    }
+}
+void insert_item(){
+    string iteamName;
+    cout<<"Enter new token name to insert: ";
+    cin>>iteamName;
+    auto stringResult = find_if(table.begin(), table.end(),
+        [iteamName](const SymbolTable& obj) { return searchByString(obj, iteamName); });
+    if (stringResult != table.end()) {
+        cout << "--Result: The iteam's SI.No is: " << stringResult->si_no << endl<<endl;
+    }
+    else {
+        if(setAttribute(iteamName)) cout<<"New token inserted successfully."<<endl;;
+    }
+
+}
 void displayTable(){
     if(table.size()>0){
         cout <<left<< setw(20) << "SI.No" << setw(20) << "Name" << setw(20) << "ID Type" << setw(20) << "Data Type" << setw(20) << "Scope" << setw(20) << "Value" << endl;
@@ -347,29 +404,31 @@ void displayLexemes(){
 void userChoice(){
     int choice;
     while(1){
-        cout<<"Choose an option: " << endl
-            << " 1. Lookup: Search for a name on the symbol table. " << endl
-            << " 2. Free: remove all entries." << endl
-            << " 3. Display Symbol table" << endl
-            << " 4. Display the lexemes" << endl
-            << " 5. Exit" << endl
+        cout<< "Choose an option: " << endl
+            << " 1. Insert an entry: "<<endl
+            << " 2. Lookup: Search for a name on the symbol table. " << endl
+            << " 3. Free: remove all entries." << endl
+            << " 4. Display Symbol table" << endl
+            << " 5. Display the lexemes" << endl
+            << " 6. Exit" << endl
             << "\nEnter your choice: ";
             cin>>choice;
-            if(choice == 1) lookUp();
-            else if(choice == 2) free();
-            else if(choice == 3) displayTable();
-            else if(choice == 4) displayLexemes();
+            if(choice == 1) insert_item();
+            else if(choice == 2) lookUp();
+            else if(choice == 3) free();
+            else if(choice == 4) displayTable();
+            else if(choice == 5) displayLexemes();
             else exit(0);
     }
 }
 // Main function
 int main() {
-    plainC();
-    if (lexemes() != 0) {
+    plainC(); //removes all the extra space and comments.
+    if (lexemes() != 0) { //create token
         return 1;
     }
-    Insert(token); // // Insert new entry in the symbol table
-    userChoice();
+    create_symbol_table(token); // // create the symbol table for the lexemes
+    userChoice(); //Gives users to choose from some options
 
     return 0;
 }

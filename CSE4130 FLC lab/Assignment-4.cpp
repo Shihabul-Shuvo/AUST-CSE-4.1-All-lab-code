@@ -44,7 +44,7 @@ void plainC() {
     FILE *readFile,*writeFile;
     char c1='\0', c2 = ' ';
     int line_no = 1;
-    readFile = fopen("input4.c","r");
+    readFile = fopen("input.c","r");
     writeFile = fopen("plainC.txt", "w");
 
     //If file is not created then show this message

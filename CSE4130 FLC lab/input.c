@@ -5,6 +5,7 @@ double f1(float a, int int x)
 {if(x<x1)
 double z;;
 else z = 0.01;}}
+for(a<n; b=c) b= b*c+b*c;
 else return z;
 }
 /* Beginning of 'main' */

@@ -310,7 +310,7 @@ int evaluate_loop_statement()
                         }
                     }
                 }
-            }
+            } else cout<<"e: unkn syntex of for"<<endl;
         }
     }
 
@@ -360,7 +360,7 @@ int main()
     } else {
         cout << "String not accepted" << std::endl;
     }
-    input_str = "b=b*c+b*c for(a=b; a<n; b=c) if(a<n) b= b*c+b*c";
+    input_str = "for(a=b, a<n; b=c) b= b*c+b*c";
     cout << "Statement: " << input_str << endl;
     if (evaluate_statement())
         cout << "Statement is correct." << endl;
