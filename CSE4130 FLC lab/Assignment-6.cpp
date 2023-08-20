@@ -74,7 +74,7 @@ void plainC() {
 
     else
     {
-        c1 = fgetc(readFile); c1 = fgetc(readFile); c1 = fgetc(readFile);
+        //c1 = fgetc(readFile); c1 = fgetc(readFile); c1 = fgetc(readFile);
         fprintf(writeFile, "%d ", line_no++);
         while((c1 = fgetc(readFile))!= EOF)
         {
